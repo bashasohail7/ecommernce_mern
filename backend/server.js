@@ -1,17 +1,19 @@
-const express = require('express');
+const express = require("express");
 const app = express();
-const dotenv = require('dotenv');
-const path =require('path');
-const productRoutes =require('./routes/productRoute');
-const connectDatabase = require('./config/database');
+app.use(express.json())
 
-dotenv.config({ path: path.join(__dirname, 'config', 'config.env') });
+const dotenv = require("dotenv");
+const path = require("path");
+const productRoutes = require("./routes/productRoute");
+const connectDatabase = require("./config/database");
 
-const PORT=process.env.PORT
+dotenv.config({ path: path.join(__dirname, "config", "config.env") });
 
-app.use('/api/v1',productRoutes)
+const PORT = process.env.PORT;
 
-    connectDatabase()
-    app.listen(PORT,()=>console.log('server running succesfully on the port ',PORT))
+app.use("/api/v1", productRoutes);
 
-
+connectDatabase();
+app.listen(PORT, () =>
+  console.log("server running succesfully on the port ", PORT)
+);
