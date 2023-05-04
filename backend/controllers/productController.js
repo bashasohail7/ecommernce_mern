@@ -1,66 +1,50 @@
 const Product = require("../models/products");
-
+const ErrorHandler = require("../utils/errorHandler");
+const catchAsyncErrors = require("../middlewares/catchAsyncErrors");
 //create product -- admin
-exports.createProduct = async (req, res, next) => {
-  try {
+  exports.createProduct = catchAsyncErrors(async(req,res,next)=>{
     const product = await Product.create(req.body);
     res.status(201).json({
       success: true,
       product,
     });
-  } catch (error) {
-    console.log(error);
-    res.status(400).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
+  })
+ 
 
 //get all products
-exports.getAllProducts = async (req, res,next) => {
+exports.getAllProducts=catchAsyncErrors(async(req,res,next)=>{
   const products = await Product.find();
   res.status(200).json({
     success: true,
     products,
   });
-};
-exports.updateProduct = async (req, res,next) => {
-    try {
-        
-     const  product = await Product.findByIdAndUpdate(req.params.id, req.body, {
-          new: true,
-          runValidators: true,
-          useFindAndModify: false,
-        });
-        res.status(200).json({
-          success:true,
-          product
-        })
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: "somethung went wrong",
-          });
-    }
+})
+
+
+//only admin
+exports.updateProduct = catchAsyncErrors( async (req, res, next) => {
+    const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+      useFindAndModify: false,
+    });
+    res.status(200).json({
+      success: true,
+      product,
+    });
  
-};
+})
 
+// only Admin
+exports.deleteProduct =catchAsyncErrors( async (req, res, next) => {
+    await Product.findByIdAndDelete(req.params.id);
+})
 
-exports.deleteProduct=async(req,res,next)=>{
+exports.getProductById = catchAsyncErrors(async (req, res, next) => {
+  const product = await Product.findById(req.params.id);
+  res.status(200).json({
+    success: true,
+    product,
+  });
+});
 
-    try {
-        await Product.findByIdAndDelete(req.params.id)
-        res.status(200).json({
-          success:true,
-          message:'deleted succesfully'
-        })
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: "something went found",
-          });
-    }
-  
-
-}
